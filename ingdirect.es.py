@@ -5,11 +5,27 @@ from PIL import Image, ImageChops, ImageStat
 import sys
 import math, operator
 
-user = ""
-pwd = ""
+import ConfigParser
+def ConfigSectionMap(section):
+    dict1 = {}
+    options = Config.options(section)
+    for option in options:
+        try:
+            dict1[option] = Config.get(section, option)
+            if dict1[option] == -1:
+                DebugPrint("skip: %s" % option)
+        except:
+            print("exception on %s!" % option)
+            dict1[option] = None
+    return dict1
+
+Config = ConfigParser.ConfigParser()
+Config.read("./config.ini")
+Config.sections
+user = ConfigSectionMap("ING")['dni']
+pwd = ConfigSectionMap("ING")['pwd']
+
 infile="./tecladoImg.png"
-global numbers
-global region
 numbers=[None]*10
 code =[None]*10
 region=[None]*10
@@ -41,7 +57,7 @@ def rmsdiff(im1, im2):
 
 driver = webdriver.Firefox()
 driver.get("https://portal.kutxabank.es/cs/Satellite/kb/es/particulares")
-assert "Kutxabank" in driver.title
+assert "Kutxabank - Particulares" in driver.title
 elem = driver.find_element_by_id("usuario")
 elem.send_keys(user)
 elem = driver.find_element_by_id("password_PAS")
@@ -99,8 +115,16 @@ elem = driver.find_element_by_id("enviar")
 elem.click()
 
 #Check que s'ha obert finestra
+time.sleep(2)
+for handle in driver.window_handles:
+    driver.switch_to_window(handle)
+    if driver.title == "Kutxabank":
+        break
+
 
 #Anar a element de baixar excel
+elem = driver.find_element_by_id("formMenuPasivo:j_id143:1:j_id146")
+elem.click()
 
 #Baixar excel i processar-lo amb el python-excel
 
