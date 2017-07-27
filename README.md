@@ -1,65 +1,86 @@
 # autobanking
 
-* Automatic banking to keep track of your expenses
+Automatic banking to keep track of your expenses
 
-Small project to keep online banking expenses under control.
+## Objectives
 
-Automatizes the access to online banking and keeps your expenses data locally in a database.
+* Small project to keep online banking expenses under control.
 
-Requests the status of all your online bank accounts and saves it in an excel automatically.
+* Automatizes the access to online banking and keeps your expenses data locally in a database.
 
-This Excel will be parsed and categorised and inserted into a SQLite DB.
+* Requests the status of all your online bank accounts and saves it in an excel automatically.
 
-Weekly reports sent to e-mail and specific analysis available.
+* This Excel will be parsed and categorised and inserted into a SQLite DB.
 
-* What is currently done:
--Access Spanish ING online bank: enter ID and password from config file. 
--Select desired bank account (pending to use XPATH to parse Account number)
--Download data between two dates into /tmp
+* Weekly reports sent to e-mail and specific analysis available.
 
-* TO-DO list:
--Refactor and organise code.
--Use Python-Excel library to read excel data.
--Insert this data into SQLite db
--Reparse SQLite data to categorize it into topics: household, transport, food, ...
--Automatic categorization by requesting the user
--Create expenses reports:
-   -Current status
-   -Weekly expenses, comparing to previous weeks
-   -Monthly expenses, comparing to previous months. show trend
-   -Evolution of categories in time
+## Status
+### What is currently done:
+* Access Spanish ING online bank: enter ID and password from config file. 
+* Select desired bank account (pending to use XPATH to parse Account number)
+* Download data between two dates into /tmp
 
-* In the future:
--Create all above for other bank provider and join data in one place
+### TO-DO list:
+* Refactor and organise code.
+* Use Python-Excel library to read excel data.
+* Insert this data into SQLite db
+* Reparse SQLite data to categorize it into topics: household, transport, food, ...
+* Automatic categorization by requesting the user
+* Create expenses reports:
+   * Current status
+   * Weekly expenses, comparing to previous weeks
+   * Monthly expenses, comparing to previous months. show trend
+   * Evolution of categories in time
 
--Multiplatform packaging (windows, linux, mac) with Python for easy install and config.
--Docker server running service
--Small app with frontend info and charts
+### In the future:
+* Create all above for other bank provider and join data in one place
+* Multiplatform packaging (windows, linux, mac) with Python for easy install and config.
+* Docker server running service
+* Small app with frontend info and charts
 
 
+## Getting started
 
+### Prerequisites
 
-* Installation
-Install pip:
-
+Yo need Python 2.7 and the following packages:
+```
 sudo apt-get install python
 sudo apt-get install pip
 sudo apt-get install xvfb
 pip install selenium
 pip install Pillow
+```
 
 download geckodriver and put it in your path
 
-* Usage:
-Copy configexample.ini to config.ini and put your access data 
+### Installation
 
-Run this to download.
+clone or download the repository
+
+Copy configexample.ini to config.ini and put your ID/code to access the Spanish ING personal account.
+
+### Usage
+
+To test it, run:
+
+```
 python ingdirect.es.py
+```
+
 This will open firefox and you will see the execution.
 If something fails you will see it in the exceptions.
 
-* Note:
+
+### Disclamer:
 This is a work in progress, use it at your own risk.
 
+
+### Author:
+Marc Muntada
+
+### Acknowledgements
+Roger Barnes for inspiration on its Australian ING online access:
+https://gist.github.com/mindsocket/3015852
 
 
