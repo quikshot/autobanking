@@ -16,7 +16,7 @@ Automatic banking to keep track of your expenses
 
 ## Status
 ### What is currently done:
-* Access Spanish ING online bank: enter ID and password from config file. 
+* Access Spanish Kutxabank online bank: enter ID and password from config file. 
 * Select desired bank account (pending to use XPATH to parse Account number)
 * Download data between two dates into /tmp
 
@@ -31,6 +31,7 @@ Automatic banking to keep track of your expenses
    * Weekly expenses, comparing to previous weeks
    * Monthly expenses, comparing to previous months. show trend
    * Evolution of categories in time
+* Add ING bank
 
 ### In the future:
 * Create all above for other bank provider and join data in one place
