@@ -49,8 +49,14 @@ Yo need Python 2.7 and the following packages:
 sudo apt-get install python
 sudo apt-get install pip
 sudo apt-get install xvfb
+#Browser automation
 pip install selenium
+#Python image processing:
 pip install Pillow
+#SQL Lite database:
+sudo apt-get install sqlite3
+#SQLite bindings for python
+#Python-excel library
 ```
 
 download geckodriver and put it in your path

@@ -4,8 +4,25 @@ import time
 from PIL import Image, ImageChops, ImageStat
 import sys
 import math, operator
-
+from shutil import copyfile
 import ConfigParser
+from optparse import OptionParser
+from time import gmtime, strftime
+from datetime import datetime, timedelta
+
+#Argument options
+parser = OptionParser()
+
+parser.add_option("-f", "--file", dest="filename",
+                  help="write report to FILE", metavar="FILE")
+
+parser.add_option("-d", "--days", dest="days",
+                  help="number of previous days to download", metavar="FILE")
+
+(options, args) = parser.parse_args()
+
+
+
 def ConfigSectionMap(section):
     dict1 = {}
     options = Config.options(section)
@@ -55,7 +72,36 @@ def rmsdiff(im1, im2):
     # calculate rms
     return stat.rms[0]
 
+# Wait until all javascript is loaded
+def isPageLoaded(driver):
+	return driver.execute_script("return document.readyState") == "complete";
 
+def waitPageLoaded(driver,timeout):
+	elapsed=0
+	while ( isPageLoaded(driver) != True ) and elapsed < timeout:
+		#print "waiting to load.."
+		time.sleep(1)
+		elapsed+=1
+	#print "loaded"
+
+		
+###################################################################
+# main program
+###################################################################
+
+print "Kutxabank excel downloader"
+print " Target output file is :",options.filename
+print " Number of previous days to download :", options.days
+finalDate = datetime.today()
+finalDate_str = time.strftime('%Y-%m-%d', time.gmtime(time.time()))
+daysint=int(options.days)
+initialDate = datetime.today() - timedelta(days=daysint)
+print initialDate
+initialDate_str = initialDate.strftime('%Y-%m-%d')
+print " Dates: " + initialDate_str + " - " + finalDate_str 
+print "======================================================"
+
+# Browser configuration for downloads
 fp = webdriver.FirefoxProfile()
 fp.set_preference('browser.download.folderList', 2) 
 fp.set_preference('browser.download.manager.showWhenStarting', False)
@@ -71,14 +117,20 @@ fp.set_preference('browser.download.manager.closeWhenDone', False)
 
 
 driver = webdriver.Firefox(fp)
-driver.implicitly_wait(10)
+driver.implicitly_wait(60)
+
+# website to access
 driver.get("https://portal.kutxabank.es/cs/Satellite/kb/es/particulares")
 assert "Kutxabank - Particulares" in driver.title
+waitPageLoaded(driver,10)
+
+# interaction
 elem = driver.find_element_by_id("usuario")
 elem.send_keys(user)
+waitPageLoaded(driver,10)
 elem = driver.find_element_by_id("password_PAS")
 elem.click()
-#elem.send_keys(pwd)
+waitPageLoaded(driver,10)
 time.sleep(3)
 elem = driver.find_element_by_id("tecladoImg")
 elem.screenshot("./tecladoImg.png")
@@ -129,6 +181,7 @@ mouse.perform()
 #Press "Entrar"
 elem = driver.find_element_by_id("enviar")
 elem.click()
+waitPageLoaded(driver,10)
 
 #Check que s'ha obert finestra
 for handle in driver.window_handles:
@@ -136,15 +189,19 @@ for handle in driver.window_handles:
     if driver.title == "Kutxabank":
         break
 
+waitPageLoaded(driver,10)
 
 #Anar a element de baixar excel
 elem = driver.find_element_by_id("formMenuSuperior:PanelSuperior:2:itemMenuSuperior")
+time.sleep(0.1)
 elem.click()
+waitPageLoaded(driver,10)
 
-#time.sleep(3)
 #Consultas
 elem = driver.find_element_by_id("formMenuAcciones:PanelAcciones:1:Accion")
+time.sleep(0.1)
 elem.click()
+waitPageLoaded(driver,10)
 
 
 #Anar a element de baixar excel
@@ -152,51 +209,83 @@ elem.click()
 #elem = driver.find_element_by_xpath("//div[@label='2095 5308 30 9115766544']")
 #Consultas
 elem = driver.find_element_by_id("formMenuOpciones:PanelSeries:0:SelectRadioMenuContratos:_2")
+time.sleep(0.1)
 elem.click()
+waitPageLoaded(driver,10)
+
 #Movements
 elem = driver.find_element_by_id("formMenuOpciones:PanelSeries:0:j_id77:_0")
+time.sleep(0.1)
 elem.click()
+waitPageLoaded(driver,10)
 
 #Entre fechas
 elem = driver.find_element_by_id("formCriterios:criteriosMovimientos:_5")
+time.sleep(0.1)
 elem.click()
+waitPageLoaded(driver,10)
 
-iniDia=1
-iniMes=1
-iniAny=2017
-endDia=1
-endMes=7
-endAny=2017
+iniDia=str(initialDate.day)
+iniMes=str(initialDate.month)
+iniAny=str(initialDate.year)
+endDia=str(finalDate.day)
+endMes=str(finalDate.month)
+endAny=str(finalDate.year)
 
 elem = driver.find_element_by_id("formCriterios:calendarioDesde_cmb_dias")
 elem.click()
+time.sleep(0.1)
+waitPageLoaded(driver,10)
 elem.send_keys(iniDia)
+waitPageLoaded(driver,10)
 elem = driver.find_element_by_id("formCriterios:calendarioDesde_cmb_mes")
+waitPageLoaded(driver,10)
 elem.click()
+time.sleep(0.1)
+waitPageLoaded(driver,10)
 elem.send_keys(iniMes)
+time.sleep(0.1)
+waitPageLoaded(driver,10)
 elem = driver.find_element_by_id("formCriterios:calendarioDesde_cmb_anyo")
+waitPageLoaded(driver,10)
 elem.click()
+time.sleep(0.1)
+waitPageLoaded(driver,10)
 elem.send_keys(iniAny)
-
+time.sleep(0.1)
+waitPageLoaded(driver,10)
+time.sleep(0.1)
 elem = driver.find_element_by_id("formCriterios:calendarioHasta_cmb_dias")
-elem.click()
+elem.click(); waitPageLoaded(driver,10)
+time.sleep(0.1)
 elem.send_keys(endDia)
+waitPageLoaded(driver,10)
 elem = driver.find_element_by_id("formCriterios:calendarioHasta_cmb_mes")
-elem.click()
+elem.click(); waitPageLoaded(driver,10)
+time.sleep(0.1)
 elem.send_keys(endMes)
+waitPageLoaded(driver,10)
 elem = driver.find_element_by_id("formCriterios:calendarioHasta_cmb_anyo")
-elem.click()
+elem.click(); waitPageLoaded(driver,10)
+time.sleep(0.1)
 elem.send_keys(endAny)
+waitPageLoaded(driver,10)
+time.sleep(0.1)
 
 elem = driver.find_element_by_id("formCriterios:mostrar")
 elem.click()
+waitPageLoaded(driver,10)
 
 elem = driver.find_element_by_id("formListado:resourceExcel")
 elem.click()
-
+waitPageLoaded(driver,10)
 
 
 #Baixar excel i processar-lo amb el python-excel
+time.sleep(5)
+driver.close()
 
-#elem.send_keys(Keys.RETURN)
-#driver.close()
+copyfile("/tmp/movimientos.xls",options.filename)
+
+
+
