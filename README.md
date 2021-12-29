@@ -84,7 +84,7 @@ This is a work in progress, use it at your own risk.
 
 
 ### Author:
-Marc Muntada
+quikshot
 
 ### Acknowledgements
 Roger Barnes for inspiration on its Australian ING online access:
